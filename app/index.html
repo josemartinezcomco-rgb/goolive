@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GooLive · Nutrición transparente</title>
+  <style>
+    :root {
+      --bg: #f7f8fa; --surface: #ffffff; --text: #1a1d21; --muted: #6b7280;
+      --border: #e5e7eb; --brand: #e11f1d; --brand-2: #10b981;
+      --p: #ef4444; --c: #f59e0b; --g: #3b82f6;
+      --radius: 14px; --shadow: 0 1px 3px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.04);
+    }
+    :root[data-theme="dark"] {
+      --bg: #0f1216; --surface: #171b21; --text: #e8eaed; --muted: #9aa2ad;
+      --border: #262c34; --shadow: 0 1px 3px rgba(0,0,0,.4);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.5; }
+    header { position: sticky; top: 0; z-index: 10; background: var(--surface);
+      border-bottom: 1px solid var(--border); padding: 12px 16px;
+      display: flex; align-items: center; gap: 12px; }
+    .logo { font-weight: 800; font-size: 20px; letter-spacing: -.5px; }
+    .logo .live { color: var(--brand); }
+    .tag { font-size: 12px; color: var(--muted); }
+    header .sp { flex: 1; }
+    .icon-btn { background: none; border: 1px solid var(--border); color: var(--text);
+      border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: 13px; }
+    nav { display: flex; gap: 4px; padding: 8px 12px; background: var(--surface);
+      border-bottom: 1px solid var(--border); position: sticky; top: 57px; z-index: 9;
+      overflow-x: auto; }
+    .nav-btn { flex: 1; min-width: max-content; background: none; border: none; color: var(--muted);
+      padding: 10px 14px; border-radius: 10px; cursor: pointer; font-size: 15px; font-weight: 600; }
+    .nav-btn.activo { background: var(--brand); color: #fff; }
+    main { max-width: 640px; margin: 0 auto; padding: 16px; }
+    .vista { display: none; } .vista.activa { display: block; }
+    .card { background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; margin-bottom: 16px; }
+    h1 { font-size: 20px; margin: 0 0 4px; } h2 { font-size: 16px; margin: 0 0 14px; }
+    h4 { margin: 10px 0 4px; font-size: 13px; }
+    label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 4px; }
+    input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border);
+      border-radius: 10px; background: var(--bg); color: var(--text); font-size: 15px; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .radios { display: flex; gap: 16px; margin-top: 6px; }
+    .radios label { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--text); }
+    .radios input { width: auto; }
+    button.primary { width: 100%; margin-top: 16px; background: var(--brand); color: #fff;
+      border: none; padding: 13px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
+    .meta-grande { text-align: center; margin: 6px 0 14px; }
+    .meta-num { font-size: 46px; font-weight: 800; color: var(--brand); }
+    .meta-unidad { display: block; font-size: 13px; color: var(--muted); }
+    .macro-row { display: flex; gap: 10px; }
+    .chip { flex: 1; text-align: center; padding: 10px; border-radius: 10px; background: var(--bg);
+      border: 1px solid var(--border); }
+    .chip-label { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; }
+    .chip-val { font-weight: 700; font-size: 17px; }
+    .chip-p .chip-val { color: var(--p); } .chip-c .chip-val { color: var(--c); } .chip-g .chip-val { color: var(--g); }
+    .btn-transp { width: 100%; margin-top: 14px; background: var(--bg); border: 1px dashed var(--border);
+      color: var(--text); padding: 11px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; }
+    .btn-transp.abierto { border-style: solid; border-color: var(--brand-2); }
+    .transp-detalle { margin-top: 12px; padding: 14px; background: var(--bg); border-radius: 10px;
+      border: 1px solid var(--border); }
+    .transp-sec ul { margin: 2px 0 0; padding-left: 18px; }
+    .transp-sec li { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .comida { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .comida-info { flex: 1; } .comida-macros { text-align: right; font-size: 13px; }
+    .btn-x { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; }
+    .muted { color: var(--muted); } .small { font-size: 12px; }
+    .progreso-txt { font-weight: 700; margin-bottom: 6px; }
+    .barra { height: 12px; background: var(--bg); border-radius: 99px; overflow: hidden; border: 1px solid var(--border); }
+    .barra-sm { height: 8px; }
+    .barra-fill { height: 100%; background: var(--brand); border-radius: 99px; transition: width .3s; }
+    .fill-p { background: var(--p); } .fill-c { background: var(--c); } .fill-g { background: var(--g); }
+    .macro-linea { margin-top: 10px; } .macro-linea-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 3px; }
+    .fila-rank { display: flex; align-items: center; gap: 12px; padding: 11px 10px; border-radius: 10px; }
+    .fila-rank:nth-child(even) { background: var(--bg); }
+    .tu-fila { background: rgba(225,31,29,.1) !important; border: 1px solid var(--brand); font-weight: 700; }
+    .rank-pos { width: 34px; color: var(--muted); font-weight: 700; } .rank-nombre { flex: 1; } .rank-pts { font-weight: 700; }
+    #detalle-puntos { margin-top: 14px; } #detalle-puntos ul { padding-left: 18px; margin: 4px 0; }
+    #detalle-puntos li { font-size: 13px; color: var(--muted); }
+    footer { text-align: center; padding: 20px; font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="logo">Goo<span class="live">Live</span></div>
+      <div class="tag">Honestidad radical · nada de cajas negras</div>
+    </div>
+    <div class="sp"></div>
+    <button id="tema-toggle" class="icon-btn" title="Cambiar tema">◐</button>
+    <button id="btn-reset" class="icon-btn" title="Borrar datos">Reset</button>
+  </header>
+
+  <nav>
+    <button class="nav-btn activo" data-vista="vista-valoracion">Valoración</button>
+    <button class="nav-btn" data-vista="vista-hoy">Hoy</button>
+    <button class="nav-btn" data-vista="vista-ranking">Ranking</button>
+  </nav>
+
+  <main>
+    <!-- Valoración -->
+    <section id="vista-valoracion" class="vista activa">
+      <div class="card">
+        <h1>Tu valoración</h1>
+        <p class="muted small">Calculamos tu meta calórica con Mifflin-St Jeor (o Katch-McArdle si nos das tu % de grasa). Verás la fórmula exacta.</p>
+        <form id="form-valoracion">
+          <div class="radios">
+            <label><input type="radio" name="sexo" value="hombre" checked /> Hombre</label>
+            <label><input type="radio" name="sexo" value="mujer" /> Mujer</label>
+          </div>
+          <div class="row2">
+            <div><label>Edad</label><input id="edad" type="number" min="12" max="100" value="45" required /></div>
+            <div><label>Altura (cm)</label><input id="altura" type="number" min="120" max="230" step="0.1" value="179.5" required /></div>
+          </div>
+          <div class="row2">
+            <div><label>Peso (kg)</label><input id="peso" type="number" min="30" max="250" step="0.1" value="89.1" required /></div>
+            <div><label>% grasa (opcional)</label><input id="grasa" type="number" min="3" max="60" step="0.1" placeholder="ej. 22.3" /></div>
+          </div>
+          <label>Nivel de actividad</label><select id="nivel"></select>
+          <label>Objetivo</label><select id="objetivo"></select>
+          <button class="primary" type="submit">Calcular mi meta</button>
+        </form>
+      </div>
+      <div class="card" id="resultado-valoracion"><p class="muted">Completa el formulario para ver tu meta y macros.</p></div>
+    </section>
+
+    <!-- Hoy -->
+    <section id="vista-hoy" class="vista">
+      <div class="card">
+        <h1>Hoy</h1>
+        <p class="muted small">Registra lo que comes contra una base de alimentos real. Calculamos kcal y macros por gramo.</p>
+        <form id="form-comida">
+          <label>Alimento</label><select id="alimento"></select>
+          <label>Cantidad (gramos)</label><input id="gramos" type="number" min="1" max="2000" placeholder="ej. 150" required />
+          <button class="primary" type="submit">Agregar</button>
+        </form>
+      </div>
+      <div class="card"><h2>Progreso del día</h2><div id="resumen-hoy"></div></div>
+      <div class="card"><h2>Registro</h2><div id="lista-comidas"></div></div>
+    </section>
+
+    <!-- Ranking -->
+    <section id="vista-ranking" class="vista">
+      <div class="card">
+        <h1>Ranking</h1>
+        <div id="tabla-ranking"></div>
+      </div>
+      <div class="card" id="detalle-puntos"></div>
+    </section>
+  </main>
+
+  <footer>GooLive · MVP funcional · cálculos reales, datos honestos</footer>
+
+  <script type="module" src="src/ui/app.js"></script>
+</body>
+</html>
